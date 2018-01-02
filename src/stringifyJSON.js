@@ -2,7 +2,6 @@
 // var stringifyJSON = JSON.stringify;
 
 // but you don't so you're going to write it from scratch:
-//NEED TO USE RECURSION
 var stringifyJSON = function(obj) {
 	var finalString = '';
 
@@ -22,7 +21,7 @@ var stringifyJSON = function(obj) {
 		var closingBracket = ']';
 
 		if (obj.length === 0) {
-			return '[]';
+			return openingBracket + closingBracket;
 		} else if (obj.length === 1) {
 			obj.forEach(function(element) {
 				if (typeof element === 'number') {
@@ -43,9 +42,28 @@ var stringifyJSON = function(obj) {
 			var result = openingBracket.substring(0, openingBracket.length - 1) + closingBracket;
 			return result;
 		}
-	} else {
-		//Work on Objects
-		//Plan to eventually create helper functions to work for both arrays and objects
+	} else if (typeof obj === 'object' && !Array.isArray(obj) && obj !== null){
+		var opening = '{';
+		var closing = '}';
+		if (Object.keys(obj).length === 0) {
+			return opening + closing;
+		} else if (Object.keys(obj).length === 1) {
+			for (var key in obj) {
+				opening += stringifyJSON(key) + ':';
+				opening += stringifyJSON(obj[key]);
+			}
+			return opening + closing;
+		} else {
+			for (var key in obj) {
+				if (typeof obj[key] === 'function' || typeof obj[key] === 'undefined') {
+					return opening + closing;
+				} else {
+					opening += stringifyJSON(key) + ':';
+					opening += stringifyJSON(obj[key]) + ',';
+				}
+			}
+			return opening.substring(0, opening.length - 1) + closing;
+		}
 	}
 	finalString += obj;
 	return finalString;
