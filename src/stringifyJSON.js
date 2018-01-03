@@ -3,68 +3,42 @@
 
 // but you don't so you're going to write it from scratch:
 var stringifyJSON = function(obj) {
-	var finalString = '';
-
-	var toStringString = function(opening, closing, array) {
-		array.forEach(function(element) {
-			opening += element;
-		})
-		return opening + closing;
+	if (typeof obj === 'number' || typeof obj === 'boolean' || obj === null) {
+		var toString = '';
+		toString += obj;
+		return toString;
 	}
 
 	if (typeof obj === 'string') {
-		var split = obj.split('');
-		return toStringString('"', '"', split);
+		return '"' + obj + '"';
 	}
-	if (Array.isArray(obj)) {
-		var openingBracket = '[';
-		var closingBracket = ']';
 
-		if (obj.length === 0) {
-			return openingBracket + closingBracket;
-		} else if (obj.length === 1) {
+	if (Array.isArray(obj)) {
+		var opening = '[';
+		var closing = ']';
+		if (obj.length >= 1) {
 			obj.forEach(function(element) {
-				if (typeof element === 'number') {
-					openingBracket += element;
-				} else {
-					openingBracket += stringifyJSON(element);
-				}
+				opening += stringifyJSON(element) + ',';
 			})
-			return openingBracket + closingBracket;
-		} else {
-			obj.forEach(function(element) {
-				if (typeof element === 'number') {
-					openingBracket += element + ',';
-				} else {
-					openingBracket += stringifyJSON(element) + ',';
-				}
-			})
-			var result = openingBracket.substring(0, openingBracket.length - 1) + closingBracket;
-			return result;
+			return opening.substring(0, opening.length - 1) + closing;
 		}
-	} else if (typeof obj === 'object' && !Array.isArray(obj) && obj !== null){
+		return opening + closing;
+	} 
+	
+	if (typeof obj === 'object') {
 		var opening = '{';
 		var closing = '}';
-		if (Object.keys(obj).length === 0) {
-			return opening + closing;
-		} else if (Object.keys(obj).length === 1) {
-			for (var key in obj) {
-				opening += stringifyJSON(key) + ':';
-				opening += stringifyJSON(obj[key]);
-			}
-			return opening + closing;
-		} else {
+		if (Object.keys(obj).length >= 1) {
 			for (var key in obj) {
 				if (typeof obj[key] === 'function' || typeof obj[key] === 'undefined') {
 					return opening + closing;
-				} else {
-					opening += stringifyJSON(key) + ':';
-					opening += stringifyJSON(obj[key]) + ',';
+				} 
+				else {
+					opening += stringifyJSON(key) + ':' + stringifyJSON(obj[key]) + ',';
 				}
 			}
 			return opening.substring(0, opening.length - 1) + closing;
 		}
+		return opening + closing;
 	}
-	finalString += obj;
-	return finalString;
 };
