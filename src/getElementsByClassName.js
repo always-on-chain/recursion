@@ -8,21 +8,22 @@
 var getElementsByClassName = function(className, element, elements) {
 	if (!element) {
 		var element = document.body;
-		var elements = [element];
+		var elements = [];
+	}
+
+	if (element.classList && element.classList.contains(className)) {
+		elements.push(element);
 	}
 
 	element.childNodes.forEach(function(node) {
 		if (node.classList && node.classList.contains(className)) {
-			elements.push(node);
-			if (node.childNodes.length >= 1) {
-				getElementsByClassName(className, node, elements)
-			}
-		//Save processing time by eliminating nodes with mocha IDs	
+			getElementsByClassName(className, node, elements)
+		//Save processing time by eliminating nodes with mocha IDs
 		} else if (node.childNodes.length >= 1 && node.id !== 'mocha') {
 			getElementsByClassName(className, node, elements)
 		}
 	})
-	
+
 	return elements;
 }; 
 
