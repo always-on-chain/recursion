@@ -35,6 +35,9 @@ var parseJSON = function(json) {
 		var toStringString = function() {
 			currentIndex++;
 			while (json[currentIndex] !== '"') {
+				if (json[currentIndex] === '\\') {
+					currentIndex++;
+				} 
 				element += string(json[currentIndex]);
 				currentIndex++;
 			}
@@ -154,7 +157,6 @@ var parseJSON = function(json) {
 				value += string(json[currentIndex]);
 				currentIndex++;
 			}
-			// obj[key] = value;
 		}
 		var resetKeyAndValue = function() {
 			key = '';
